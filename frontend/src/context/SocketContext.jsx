@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import io from "socket.io-client";
 import { UserData } from "./UserContext";
 
-const EndPoint = "http://localhost:7000";
+const EndPoint = "https://argram.onrender.com";
 
 const SocketContext = createContext();
 
