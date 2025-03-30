@@ -12,6 +12,7 @@ const Register = () => {
   const [gender, setGender] = useState("")
   const [file, setFile] = useState("")
   const [filePrev, setFilePrev] = useState("")
+  const [showProfilePicWarning, setShowProfilePicWarning] = useState(false)
   
   const { registerUser, loading } = UserData()
   const { fetchPosts } = PostData()
@@ -19,16 +20,23 @@ const Register = () => {
 
   const fileHandler = e => {
     const file = e.target.files[0]
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onloadend = () => {
-      setFilePrev(reader.result)
-      setFile(file)
+    if (file) {
+      setShowProfilePicWarning(false)
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => {
+        setFilePrev(reader.result)
+        setFile(file)
+      }
     }
   }
 
   const submitHandler = e => {
     e.preventDefault()
+    if (!file) {
+      setShowProfilePicWarning(true)
+      return
+    }
     const formdata = new FormData()
     formdata.append("name", name)
     formdata.append("email", email)
@@ -51,8 +59,8 @@ const Register = () => {
           <form onSubmit={submitHandler} className="space-y-6">
             {/* Profile Picture Upload */}
             <div className="flex flex-col items-center">
-              <div className="relative mb-4">
-                <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow">
+              <div className="relative mb-1">
+                <div className={`w-24 h-24 rounded-full bg-gray-200 overflow-hidden border-2 ${showProfilePicWarning ? 'border-red-500' : 'border-white'} shadow`}>
                   {filePrev ? (
                     <img src={filePrev} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
@@ -68,12 +76,15 @@ const Register = () => {
                     className="hidden" 
                     onChange={fileHandler} 
                     accept="image/*"
-                    required
                   />
                 </label>
               </div>
+              {showProfilePicWarning && (
+                <p className="text-sm text-red-500 mt-1">Please upload a profile picture</p>
+              )}
             </div>
 
+            {/* Rest of your form remains the same */}
             <div className="space-y-4">
               {/* Name Input */}
               <div className="relative">
